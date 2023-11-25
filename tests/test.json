@@ -1,0 +1,13 @@
+{
+    "dieter": {"dygo": 22, "dest": "param1"},
+    "kahle": 33,
+    "ptt": {
+        "maren": 0.33,
+        "lobs": [1,2,3],
+        "dd": {
+            "kerl": {"dygo": "dygo", "dest": "param2"}
+        },
+        "poren": {"dygo": "dygo", "dest": "param3"}
+    },
+    "siebt":  {"dygo": "dygo", "dest": "param4"}
+}
