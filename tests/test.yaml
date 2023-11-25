@@ -1,0 +1,23 @@
+type: 'object'
+
+highon:
+  life:
+    dygo: 'dygo'
+    dest: 'life'
+  failSafe:
+    - triple:
+        junction:
+          dygo: 'dygo'
+          dest: 'junction'
+
+support:
+  supportMachine:
+    dygo: 'dygo'
+    dest: 'support'
+
+machines:
+  - printer:
+  - msu:
+  - brigade:
+      project: 'alba'
+      position: False

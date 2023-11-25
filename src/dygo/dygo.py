@@ -2,7 +2,7 @@ from gooey import Gooey, GooeyParser
 from pathlib import Path
 from typing import Any, Union
 import json
-#import pyyaml
+import yaml
 
 from typing import Union
 
@@ -14,7 +14,8 @@ def _load_cfg(path: Path):
             return json.load(file)
 
     if path.suffix == ".yaml" or path.suffix == ".yml":
-        raise NotImplementedError()
+        with path.open() as file:
+            return yaml.load(file, Loader=yaml.FullLoader)
 
     raise NotImplementedError(f"File ending {path.suffix} not supported")
 
