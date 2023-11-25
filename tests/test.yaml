@@ -9,6 +9,10 @@ highon:
         junction:
           dygo: 'dygo'
           dest: 'junction'
+    - double:
+        a: 3
+        b: 33
+        c: 333
 
 support:
   supportMachine:

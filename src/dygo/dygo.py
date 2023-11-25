@@ -35,7 +35,7 @@ def render(path: Union[str, Path]) -> Any:
         dest = _get_map_target(param_map, cfg)["dest"]
         dygo_param_maps_with_dest[dest] = param_map
 
-    print(dygo_param_maps_with_dest)
+    #print(dygo_param_maps_with_dest)
 
     args = _render_gooey(dygo_param_maps_with_dest, cfg)
 
@@ -60,7 +60,6 @@ def _render_gooey(dygo_param_maps_with_id, cfg):
     for param_id in dygo_param_maps_with_id:
         arg_params = _get_map_target(dygo_param_maps_with_id[param_id], cfg)
         arg_params = _clean_arg_params(arg_params)
-        print(arg_params)
         parser.add_argument(**arg_params)
 
     args = parser.parse_args()
