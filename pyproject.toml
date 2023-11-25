@@ -30,9 +30,9 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/unknown/dygo#readme"
-Issues = "https://github.com/unknown/dygo/issues"
-Source = "https://github.com/unknown/dygo"
+Documentation = "https://github.com/m-birke/dygo#readme"
+Issues = "https://github.com/m-birke/dygo/issues"
+Source = "https://github.com/m-birke/dygo"
 
 [tool.hatch.version]
 path = "src/dygo/__about__.py"
