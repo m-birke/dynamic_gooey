@@ -1,4 +1,4 @@
-# dygo
+# `dygo` - Dynamic Gooey
 
 [![PyPI - Version](https://img.shields.io/pypi/v/dygo.svg)](https://pypi.org/project/dygo)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dygo.svg)](https://pypi.org/project/dygo)
