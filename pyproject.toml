@@ -39,9 +39,11 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/m-birke/dygo#readme"
-Issues = "https://github.com/m-birke/dygo/issues"
-Source = "https://github.com/m-birke/dygo"
+Changelog = "https://github.com/m-birke/dynamic_gooey/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/m-birke/dynamic_gooey#readme"
+Homepage = "https://github.com/m-birke/dynamic_gooey"
+Issues = "https://github.com/m-birke/dynamic_gooey/issues"
+Source = "https://github.com/m-birke/dynamic_gooey"
 
 [tool.hatch.version]
 path = "src/dygo/__about__.py"
