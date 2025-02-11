@@ -1,23 +1,13 @@
-from gooey import Gooey, GooeyParser
-from pathlib import Path
-from typing import Any, Union
 import json
+from pathlib import Path
+from typing import Any, List, Union
+
+import dpath.util
 import yaml
+from gooey import Gooey, GooeyParser
+from jsonpath_ng import jsonpath, parse
 
-from typing import Union
-
-
-def _load_cfg(path: Path):
-    
-    if path.suffix == ".json":
-        with path.open() as file:
-            return json.load(file)
-
-    if path.suffix == ".yaml" or path.suffix == ".yml":
-        with path.open() as file:
-            return yaml.load(file, Loader=yaml.FullLoader)
-
-    raise NotImplementedError(f"File ending {path.suffix} not supported")
+ConfigType = Union[dict, list, str, int, float, bool, None]
 
 
 def render(path: Union[str, Path]) -> Any:
@@ -25,17 +15,13 @@ def render(path: Union[str, Path]) -> Any:
 
     cfg = _load_cfg(path)
 
-    dygo_param_maps = _find_dygo_params(cfg)
+    dygo_params_map = _find_dygo_params(cfg)
 
-    if not dygo_param_maps:
+    if not dygo_params_map:
         return cfg
 
-    dygo_param_maps_with_dest = {}
-    for param_map in dygo_param_maps:
-        dest = _get_map_target(param_map, cfg)["dest"]
-        dygo_param_maps_with_dest[dest] = param_map
-
-    #print(dygo_param_maps_with_dest)
+    # key: dest, value: node path
+    dygo_param_maps_with_dest = {_get_path_target(node_path, cfg)["dest"]: node_path for node_path in dygo_params_map}
 
     args = _render_gooey(dygo_param_maps_with_dest, cfg)
 
@@ -46,56 +32,55 @@ def render(path: Union[str, Path]) -> Any:
     return cfg
 
 
-def _overwrite_map_target(cfg, map, value):
-    temp_target = cfg
-    for el in map[:-1]:
-        temp_target = temp_target[el]
-    temp_target[map[-1]] = value
-
-
 @Gooey
-def _render_gooey(dygo_param_maps_with_id, cfg):
+def _render_gooey(dygo_params_map_with_id: dict, cfg: ConfigType):
     parser = GooeyParser(description="TODO allow user to define progr name")
 
-    for param_id in dygo_param_maps_with_id:
-        arg_params = _get_map_target(dygo_param_maps_with_id[param_id], cfg)
+    for param_id in dygo_params_map_with_id:
+        arg_params = _get_path_target(dygo_params_map_with_id[param_id], cfg)
         arg_params = _clean_arg_params(arg_params)
         parser.add_argument(**arg_params)
 
     args = parser.parse_args()
-
     return args
 
 
 def _clean_arg_params(arg_params: dict):
     arg_params.pop("dygo")
-
     return arg_params
 
 
-def _get_map_target(map, cfg):
-    temp_target = cfg
-    for el in map:
-        temp_target = temp_target[el]
-    return temp_target
+def _get_path_target(node_path: str, cfg: ConfigType):
+    return dpath.util.get(obj=cfg, glob=node_path, separator=".")
 
 
-def _find_dygo_params(cfg: Any) -> Union[list, bool]:
-    if not isinstance(cfg, dict):
-        return False
+def _overwrite_map_target(cfg: ConfigType, node_path: str, value):
+    dpath.util.set(obj=cfg, glob=node_path, value=value, separator=".")
 
-    if cfg.get("dygo", None):
-        return True
 
-    maps_to_found_params = []
-    for el in cfg:
-        res = _find_dygo_params(cfg[el])
-        if isinstance(res, bool) and res:
-            maps_to_found_params.append([el])
+def _find_dygo_params(cfg: ConfigType) -> List[str]:
+    """Extracts all paths to dygo params from the config
 
-        if isinstance(res, list):
-            # here List[List[Any]] is expected
-            relative_resolved_mappings = [[el]+res_el for res_el in res]
-            maps_to_found_params = maps_to_found_params + relative_resolved_mappings
+    :param cfg: loaded config
+    :return: list of . separated paths to dygo params
+    """
+    # this query searches for all 'dygo' keys
+    # https://github.com/json-path/JsonPath
+    jsonpath_expr: jsonpath.Descendants = parse("$..dygo")
+    matches: list[jsonpath.DatumInContext] = jsonpath_expr.find(cfg)
 
-    return maps_to_found_params
+    # .context for parent node
+    return [str(match.context.full_path) for match in matches]
+
+
+def _load_cfg(path: Path) -> ConfigType:
+
+    if path.suffix == ".json":
+        with path.open() as file:
+            return json.load(file)
+
+    if path.suffix == ".yaml" or path.suffix == ".yml":
+        with path.open() as file:
+            return yaml.load(file, Loader=yaml.FullLoader)
+
+    raise NotImplementedError(f"File ending {path.suffix} not supported")

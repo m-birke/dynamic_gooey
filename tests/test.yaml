@@ -4,6 +4,7 @@ highon:
   life:
     dygo: 'dygo'
     dest: 'life'
+    help: "I'm here to help you"
   failSafe:
     - triple:
         junction:
@@ -16,7 +17,7 @@ highon:
 
 support:
   supportMachine:
-    dygo: 'dygo'
+    dygo: 'room for comment'
     dest: 'support'
 
 machines:
